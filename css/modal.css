@@ -60,7 +60,7 @@
     padding: 0 20px;
 }
 
-.modal-field{
+.modal-field, .telefone{
     width: calc(50% - 10px);
     height: 40px;
     outline-style: none;
@@ -70,7 +70,7 @@
     font-size:1rem;
 }
 
-.modal-field:focus{
+.modal-field, .telefone:focus{
     border: 2px solid var(--primary-color);
     box-shadow: 0 0 3px var(--primary-color);
 }
