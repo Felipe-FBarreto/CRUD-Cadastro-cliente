@@ -62,10 +62,74 @@ const saveClient = () =>{
             celular: document.getElementById('celular').value,
             cidade: document.getElementById('cidade').value,
         }
-        creatClient(cliente)
+        const index = document.getElementById('nome').dataset.index
+        if(index === 'new'){
+            creatClient(cliente)
+            updateTable()
+            closeModal()
+        }else
+        updateClient(index,cliente)
+        updateTable()
         closeModal()
+
     }
 }
+
+const createRow = (client,index) =>{
+    const newRow = document.createElement('tr')
+    newRow.innerHTML = `
+    <td>${client.nome}</td>
+    <td>${client.email}</td>
+    <td>${client.celular}</td>
+    <td>${client.cidade}</td>
+    <td>
+        <button type="button" class="button green" data-action="edit-${index}">Editar</button>
+        <button type="button" class="button red" data-action="delete-${index}">Excluir</button>
+    </td> `
+    document.querySelector("#tableClient>tbody").appendChild(newRow)
+}
+
+const clearTable = () =>{
+    const row = document.querySelectorAll("#tableClient>tbody tr")
+    row.forEach(row => row.parentNode.removeChild(row))
+}
+const updateTable = () =>{
+    const dadosClient = readClient()
+    clearTable()
+    dadosClient.forEach(createRow)
+}
+const fillFields = (client) =>{
+    document.getElementById('nome').value = client.nome
+    document.getElementById('email').value = client.email
+    document.getElementById('celular').value = client.celular
+    document.getElementById('cidade').value = client.cidade
+    document.getElementById('nome').dataset.index = client.index
+}
+const editeClient = (index) =>{
+    const client = readClient()[index]
+    client.index = index
+    fillFields(client)
+    openModal()
+}
+const editeDelete = (event) =>{
+    if(event.target.type == "button"){
+       const [action,index] = event.target.dataset.action.split('-')
+       
+        if(action == 'edit'){
+            editeClient(index)
+        }else{
+            const client = readClient()[index]
+            const response = confirm(`Deseja realmente exluir o cliente ${client.nome}`)
+            if(response){
+                deletar(index)
+                updateTable()
+            }
+        }
+
+    }   
+        
+}
+updateTable()
 
 // EVENTOS
 document.getElementById('cadastrarCliente')
@@ -80,8 +144,8 @@ document.getElementById('salvar')
 document.getElementById('cancelar')
     .addEventListener('click', cancelar)
 
-
-
+document.querySelector('#tableClient>tbody')
+    .addEventListener('click',editeDelete)
 
 /////// MASK PARA CELULAR COM DDD E NUMERO SEPARADO
 jQuery("input.telefone")
